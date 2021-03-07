@@ -3,6 +3,9 @@ const minimist = require("minimist");
 const fs = require("fs-extra");
 const mysqldump = require("mysqldump");
 const dayjs = require("dayjs");
+const ora = require("ora");
+const cron = require("node-cron");
+const spinner = ora("Loading").start();
 
 var args = minimist(process.argv.slice(2), {
   string: "type",
@@ -20,6 +23,9 @@ const database = {
 
 async function getDb() {
   if (args.type == "mysql") {
+    spinner.start();
+    spinner.color = "yellow";
+    spinner.text = "Loading";
     const result = await mysqldump({
       connection: {
         host: "localhost",
@@ -32,11 +38,13 @@ async function getDb() {
         "DD-MM-YYYY HH:mm:ss"
       )}.sql`,
     });
+    spinner.stop();
   } else {
     console.log("error");
   }
 }
-
-getDb().catch((e) => {
-  console.log(e);
+cron.schedule("*/2 * * * *", () => {
+  getDb().catch((e) => {
+    console.log(e);
+  });
 });
