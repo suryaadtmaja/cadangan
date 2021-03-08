@@ -5,7 +5,6 @@ const mysqldump = require("mysqldump");
 const dayjs = require("dayjs");
 const ora = require("ora");
 const cron = require("node-cron");
-const spinner = ora("Loading").start();
 
 var args = minimist(process.argv.slice(2), {
   string: "type",
@@ -21,30 +20,40 @@ const database = {
   database: args.dbname,
 };
 
+async function mysql() {
+  await mysqldump({
+    connection: {
+      host: "localhost",
+      user: database.username,
+      password: database.password,
+      database: database.database,
+    },
+    dumpToFile: `backup-${database.database}-${dayjs(
+      new Date(),
+      "DD-MM-YYYY HH:mm:ss"
+    )}.sql`,
+  });
+}
+
 async function getDb() {
-  if (args.type == "mysql") {
-    spinner.start();
-    spinner.color = "yellow";
-    spinner.text = "Loading";
-    const result = await mysqldump({
-      connection: {
-        host: "localhost",
-        user: database.username,
-        password: database.password,
-        database: database.database,
-      },
-      dumpToFile: `backup-${database.database}-${dayjs(
-        new Date(),
-        "DD-MM-YYYY HH:mm:ss"
-      )}.sql`,
-    });
-    spinner.stop();
-  } else {
-    console.log("error");
+  switch (args.type) {
+    case "mysql":
+      mysql().catch((e) => console.log(e));
+      break;
+
+    default:
+      break;
   }
 }
-cron.schedule("*/2 * * * *", () => {
+
+async function backupInit() {
+  // cron.schedule("* * * * *", () => {
   getDb().catch((e) => {
     console.log(e);
   });
+  // });
+}
+
+backupInit().catch((e) => {
+  console.log(e);
 });
