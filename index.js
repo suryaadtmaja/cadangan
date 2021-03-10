@@ -1,11 +1,10 @@
 require("dotenv").config();
 const minimist = require("minimist");
 const fs = require("fs-extra");
-const mysqldump = require("mysqldump");
 const dayjs = require("dayjs");
 const ora = require("ora");
 const cron = require("node-cron");
-
+const execa = require("execa");
 var args = minimist(process.argv.slice(2), {
   string: "type",
   string: "dbname",
@@ -21,18 +20,31 @@ const database = {
 };
 
 async function mysql() {
-  await mysqldump({
-    connection: {
-      host: "localhost",
-      user: database.username,
-      password: database.password,
-      database: database.database,
-    },
-    dumpToFile: `backup-${database.database}-${dayjs(
-      new Date(),
-      "DD-MM-YYYY HH:mm:ss"
-    )}.sql`,
-  });
+  try {
+    const { stdout: mysqldump } = execa("mysqldump", [
+      "-u",
+      `${database.username}`,
+      `-p${database.password}`,
+      `${database.database}`,
+    ]);
+    mysqldump
+      .pipe(
+        fs.createWriteStream(
+          `backup-${database.database}-${dayjs(
+            new Date(),
+            "DD-MM-YYYY HH:mm:ss"
+          )}.sql`
+        )
+      )
+      .on("Finish", () => {
+        console.log("Backup Completed");
+      })
+      .on("error", (e) => {
+        console.log(e);
+      });
+  } catch (e) {
+    console.log("Error");
+  }
 }
 
 async function getDb() {
