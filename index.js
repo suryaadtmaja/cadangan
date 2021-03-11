@@ -27,21 +27,15 @@ async function mysql() {
       `-p${database.password}`,
       `${database.database}`,
     ]);
-    mysqldump
-      .pipe(
-        fs.createWriteStream(
-          `backup-${database.database}-${dayjs(
-            new Date(),
-            "DD-MM-YYYY HH:mm:ss"
-          )}.sql`
-        )
+    mysqldump.pipe(
+      fs.createWriteStream(
+        `backup-${database.database}-${dayjs(
+          new Date(),
+          "DD-MM-YYYY HH:mm:ss"
+        )}.sql`
       )
-      .on("Finish", () => {
-        console.log("Backup Completed");
-      })
-      .on("error", (e) => {
-        console.log(e);
-      });
+    );
+    console.log("Backup Completed");
   } catch (e) {
     console.log("Error");
   }
@@ -50,9 +44,8 @@ async function mysql() {
 async function getDb() {
   switch (args.type) {
     case "mysql":
-      mysql().catch((e) => console.log(e));
+      mysql();
       break;
-
     default:
       break;
   }
