@@ -52,11 +52,11 @@ async function getDb() {
 }
 
 async function backupInit() {
-  // cron.schedule("* * * * *", () => {
-  getDb().catch((e) => {
-    console.log(e);
+  cron.schedule("* * * * *", () => {
+    getDb().catch((e) => {
+      console.log(e);
+    });
   });
-  // });
 }
 
 backupInit().catch((e) => {

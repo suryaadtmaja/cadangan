@@ -1,5 +1,8 @@
 {
   "name": "cadangan",
+  "scripts": {
+    "start": "node index.js --type mysql --dbname testcuk"
+  },
   "version": "1.0.0",
   "contributors": [
     "filsuck <filsuck21@gmail.com>"
