@@ -10,4 +10,11 @@ Backup mysql database regularly using cadangan, you can spesificly set the sched
         });
     }
 
+# How to start cadangan
+
+- Install pm2 https://pm2.keymetrics.io/
+- clone this repo
+- change the script start in package.json node "index.js --type mysql --dbname databasename"
+- start the project by running `pm2 start npm --name "backup name" -- start"`
+
 > Cadangan's simple tools created using node.js
