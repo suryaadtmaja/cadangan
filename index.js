@@ -2,7 +2,6 @@ require("dotenv").config();
 const minimist = require("minimist");
 const fs = require("fs-extra");
 const dayjs = require("dayjs");
-const ora = require("ora");
 const cron = require("node-cron");
 const execa = require("execa");
 var args = minimist(process.argv.slice(2), {
