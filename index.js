@@ -6,15 +6,19 @@ const cron = require("node-cron");
 const execa = require("execa");
 var args = minimist(process.argv.slice(2), {
   string: "type",
+  string: "username",
+  string: "password",
   string: "dbname",
   alias: {
+    user: "username",
+    pass: "password",
     db: "dbname",
   },
 });
 
 const database = {
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
+  username: args.username,
+  password: args.password,
   database: args.dbname,
 };
 

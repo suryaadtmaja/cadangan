@@ -1,7 +1,7 @@
 {
   "name": "cadangan",
   "scripts": {
-    "start": "node index.js --type mysql --dbname testcuk"
+    "start": "node index.js --type mysql --user root --pass examplepass --dbname databasename"
   },
   "version": "1.0.0",
   "contributors": [
